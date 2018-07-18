@@ -11,6 +11,10 @@ echo "SP_PASSWORD:"
 read SP_PASSWORD
 echo "SP_TENANT:"
 read SP_TENANT
+echo "DB_HOST:"
+read DB_HOST
+echo "DB_PASSWORD:"
+read DB_PASSWORD
 
 echo "ok copy and paste this part in your secrets file:"
 
@@ -21,3 +25,5 @@ echo "    ACCOUNT_NAME: " `echo $ACCOUNT_NAME | base64`
 echo "    SP_NAME: " `echo $SP_NAME | base64`
 echo "    SP_PASSWORD: " `echo $SP_PASSWORD | base64`
 echo "    SP_TENANT: " `echo $SP_TENANT | base64`
+echo "    DB_HOST: " `echo $DB_HOST| base64`
+echo "    DB_PASSWORD: " `echo $DB_PASSWORD | base64`

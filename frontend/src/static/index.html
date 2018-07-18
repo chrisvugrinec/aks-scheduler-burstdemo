@@ -1,0 +1,89 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="navbar"><span>CM Demo</span></div>
+<div class="wrapper">
+    <div id="chart"></div>
+    <script>
+
+            var data = JSON.parse('{ "counter": "0", "counterFaces": "0", "CounterNonFaces": "0"}');
+
+            function getTotalCounter(){
+
+                // hack logly extendTraces behaviour
+                getData();
+                console.log("counter: "+data.counter);
+                setTimeout(function() { }, 1000);
+                return parseFloat(data.counter);
+            }
+            
+            function getTotalFacesCounter(){
+
+               console.log("counter: "+data.counterFaces);
+               setTimeout(function() { }, 1000);
+               return parseFloat(data.counterFaces);
+            }
+
+            function getTotalNonFacesCounter(){
+               console.log("counter: "+data.CounterNonFaces);
+               setTimeout(function() { }, 1000);
+               return parseFloat(data.CounterNonFaces);
+            }
+
+            function getData() {
+                $.ajax({     url: "http://13.80.110.201/api/cmdemo-counter",
+                             dataType: 'json',
+                             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                             type: "GET",
+                             async: false,
+                             success: function(result){
+                                resultTotal = result.counter;
+                                totalSounter = resultTotal;
+                                data = result;
+                             },
+                             error: function(result){
+                                console.log("Error occured retrieving counter data");
+                }});
+                console.log("retrieved data");
+            }
+
+            Plotly.plot('chart',[{
+                y:[getTotalCounter()],
+                type:'line',
+                name: 'total images'
+            },
+            {
+                y:[getTotalFacesCounter()],
+                type:'line',
+                name:'total faces'
+            },
+            {
+                y:[getTotalNonFacesCounter()],
+                type:'line',
+                name:'total non faces'
+            }]);
+
+            var cnt = 0;
+            setInterval(function(){
+                Plotly.extendTraces('chart',{ y:[[getTotalCounter()],[getTotalFacesCounter()],[getTotalNonFacesCounter()]]}, [0,1,2]);
+                cnt++;
+                if(cnt > 500) {
+                    Plotly.relayout('chart',{
+                        xaxis: {
+                            range: [cnt-500,cnt]
+                        }
+                    });
+                }
+            },500);
+
+            // Loop Forever, getting data every 3 seconds
+            //var interval = self.setInterval(function(){getData()},3000);
+        </script>
+</div>
+</body>
+</html>

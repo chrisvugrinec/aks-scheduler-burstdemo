@@ -25,6 +25,8 @@ ACCOUNT_NAME = os.environ['ACCOUNT_NAME']
 SP_NAME = os.environ['SP_NAME']
 SP_PASSWORD = os.environ['SP_PASSWORD']
 SP_TENANT = os.environ['SP_TENANT']
+DB_HOST = os.environ['DB_HOST']
+DB_PASSWORD = os.environ['DB_PASSWORD']
 
 # Initialize Azure connection
 # Needed As the azure.blob python lib gave errors, workaround using the cli
@@ -34,7 +36,8 @@ def initAzure():
 # DB stuff
 pymysql.install_as_MySQLdb()
 import MySQLdb
-db = MySQLdb.connect("mysql.default.svc.cluster.local","root","HelloWorld123!","cmdemo")
+#db = MySQLdb.connect("mysql.default.svc.cluster.local","root","HelloWorld123!","cmdemo")
+db = MySQLdb.connect(str(DB_HOST),"root",str(DB_PASSWORD),"cmdemo")
 cursor = db.cursor()
 insert_record = ("INSERT INTO cmdemo" "(image, face, faceregtime)" "VALUES (%s, %s, %s)")
 
