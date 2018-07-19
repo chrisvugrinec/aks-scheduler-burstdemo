@@ -1,0 +1,6 @@
+cloneURL: https://github.com/deis/empty-testbed.git
+namespace: default
+project: deis/empty-testbed
+repository: github.com/deis/empty-testbed
+secrets:
+  dbPassword: supersecret

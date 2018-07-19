@@ -1,0 +1,5 @@
+const { events } = require("brigadier")
+
+events.on("hello", () => {
+  console.log("HELLO wORLD")
+})
