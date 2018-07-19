@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cmdemo-image-recognitionservice
+  labels:
+    app: cmdemo-image-recognitionservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cmdemo-image-recognitionservice
+  template:
+    metadata:
+      labels:
+        app: cmdemo-image-recognitionservice
+    spec:
+      containers:
+      - name: cmdemo-image-recognitionservice
+        image: cvugrinec/image-counterservice:latest
+        imagePullPolicy: Always
+        env:
+         - name: DB_PASSWORD
+           value: "XXXXXXXX"
+         - name: DB_HOST
+           value: "XXXXX"
+      restartPolicy: Always
