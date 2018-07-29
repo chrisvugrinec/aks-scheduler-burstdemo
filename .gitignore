@@ -1,0 +1,12 @@
+workerapp/image-recognition-secrets.yaml
+workerapp/k8/image-recognition-pod.yaml
+workerapp/k8/image-recognition-secrets.yaml
+aci-connector/
+brigade/kashti
+kubernetes-client
+../workerapp/k8/cmdemo-secrets.yaml
+../workerapp/k8/createSecret.sh.secret
+../workerapp/k8/image-recognition-deployment-secret.yaml
+../workerapp/k8/image-recognition-deployment.yaml
+../workerapp/k8/test.yaml
+
