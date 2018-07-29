@@ -20,6 +20,9 @@ const kube = k8s.Config.defaultClient();
  *   The Kubernetes namespace.
  */
 exports.Event = function(ns) {
+
+
+    console.log("EVENT CALLED!!!");
     this.namespace = ns;
     /**
      * The commit SHA. If left empty, the tip of commit_ref will
@@ -40,7 +43,7 @@ exports.Event = function(ns) {
      * If this is empty, the brigade.js in VCS will be used.
      */
     this.script = "";
-    this.log_level = "";
+    this.log_level = "debug";
 
     /**
      * The build ID. If this is blank (the suggested value) when `create()`
@@ -48,24 +51,23 @@ exports.Event = function(ns) {
      */
     this.build_id = "";
 
-    /**
-     * Create this event inside of Kubernetes.
-     *
-     * @param string hook
-     *   The event name (e.g. exec)
-     * @param string project
-     *   The project ID, of the form 'brigade-XXXXXXXX...'
-     * @param string payload
-     *   The payload that should be sent. Empty is okay.
-     */
+
     this.create = function(hook, project, payload) {
-        // This is a guard to prevent us from creating
-        // an event for a project that does not exist.
-        return kube.readNamespacedSecret(project, this.namespace).then( () => {
+
+
+        console.log("XXX CREATE");
+        return kube.readNamespacedSecret(project, "default").then( () => {
+ 
+            console.log("REading secret for project: "+project+" in namespace "+this.namespace);
+
             if (!this.build_id) {
               this.build_id = ulid.ulid().toLowerCase()
+              console.log("XXX CREATE - NO BUILD, create buildid: "+this.build_id);
             }
             let buildName = `brigade-${this.build_id}`
+
+            // Create Secret == create event
+
             let secret = new k8s.V1Secret()
             secret.type = "brigade.sh/build"
             secret.metadata = {
@@ -77,30 +79,43 @@ exports.Event = function(ns) {
                     project: project
                 }
             }
+
+            console.log("XXX CREATE - create secret data");
+
             secret.data = {
                 // TODO: Do we let this info be passed in?
-                commit_id: b64enc(this.commit_id),
+
+                //commit_id: b64enc(this.commit_id),
                 commit_ref: b64enc(this.commit_ref),
                 build_id: b64enc(this.build_id),
                 build_name: b64enc(buildName),
                 event_provider: b64enc(this.event_provider),
                 event_type: b64enc(hook),
                 project_id: b64enc(project),
-                payload: b64enc(payload)
+                //payload: b64enc(this.script)
             }
             if (this.script) {
-                secret.data.script = base64enc(this.script);
+                console.log("XXX CREATE - NO BUILD 2");
+                secret.data.script = b64enc(this.script);
             }
             if (this.log_level) {
-                secret.data.log_level = base64enc(this.script);
+                console.log("XXX CREATE - NO BUILD 3");
+                secret.data.log_level = b64enc(this.script);
             }
+            console.log("XXX CREATE - NO BUILD 4");
             return kube.createNamespacedSecret(this.namespace, secret);
         }).catch(() => {
+            console.log("XXX EXECPTION");
             return Promise.reject(`project ${project} could not be loaded`);
         })
-    }
+    } 
 }
 
+const encode = require('nodejs-base64-encode');
 function b64enc(original) {
-    return Buffer.from(original).toString("base64");
+
+    result = encode.encode(original, 'base64');
+    console.log("ori: "+original+" encoded: "+result);
+    return result; 
+    //return Buffer.from(original).toString("base64");
 }

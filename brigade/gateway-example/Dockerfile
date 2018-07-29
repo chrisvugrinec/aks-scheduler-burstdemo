@@ -5,8 +5,6 @@ WORKDIR /app
 COPY *.js /app/
 COPY package.json /app/
 COPY yarn.lock /app/
+RUN yarn install
 
-RUN yarn install 
-#RUN yarn add brigadier
-
-CMD ["yarn", "start"]
+CMD ["yarn", "start","--inspect"]

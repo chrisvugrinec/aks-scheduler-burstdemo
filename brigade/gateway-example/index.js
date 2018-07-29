@@ -7,6 +7,7 @@ const { Event } = require("./brigade-event")
 const app = express();
 app.use(bodyParser.raw({type: "*/*"}));
 
+
 // ==== CONFIGURATION ====
 // Configure what values we get from environment variables. These are
 // passed into the runtime via `chart/templates/deployment.yaml`.
@@ -48,48 +49,22 @@ config.validate({allowed: 'strict'});
 const namespace = config.get("namespace");
 
 
-// ==== REGISTER YOUR WEBHOOKS ====
-// This is an example, and it is unauthenticated.
-// It allows the user to specify the event (hook) and
-// the project ID (brigade-XXXXXXXXXXXXXXXX)
-// To learn more about Express.js apps, go here:
-//  https://expressjs.com
-
-
 app.post("/v1/webhook/cmdemo/:project", (req, res) => {
 
-    console.log("==> handling an 'cmdemo' event for project: "+req.params.project);
-    brigEvent = new Event(namespace);
-    const payload = req.body
-    brigEvent.create("cmdemo-gw", req.params.project, payload).then(() => {
-        res.json({"status": "yay"});
-    }).catch((e) => {
-        console.error(e);
-        res.sendStatus(500);
-    });
+    const eventName = "myevent";
+    const project = req.params.project
+    const payload = "console.log(\"hello world\")";
 
-    console.log("==> finished an 'cmdemo' event")
-});
-
-app.post("/v1/webhook/:hook/:project", (req, res) => {
-    const eventName = req.params.hook;
-    const project = req.params.project;
-    const payload = req.body
-
-    // The main thing to do is transform the incomming request into
-    // a new brigade event. Calling 'brigEvent.create()' will
-    // create the event, and the Brigade controller will take over
-    // from there.
-    brigEvent = new Event(namespace);
+    console.log("job triggered for project: "+project);
+    brigEvent = new Event("default");
     brigEvent.create(eventName, project, payload).then(() => {
-        // At this point, we know the event was created. So
-        // we send a trivial response.
         res.json({"status": "accepted"});
     }).catch((e) => {
         console.error(e);
         res.sendStatus(500);
-    });
+    }); 
 });
+
 
 // ==== BOILERPLATE ====
 // Kubernetes health probe. If you remove this, you will need to modify

@@ -1,6 +1,6 @@
 [environments]
   [environments.development]
-    name = "cmdemo-gateway"
+    name = "gateway-example"
     namespace = "default"
     wait = true
     watch = false

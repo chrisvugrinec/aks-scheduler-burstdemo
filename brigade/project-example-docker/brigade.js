@@ -1,6 +1,6 @@
-const { events, Job } = require("brigadier")
-  
-events.on("cmdemo", (brigadeEvent, project) => {
+const { events, Job } = require('brigadier')
+
+events.on("myevent", (brigadeEvent, project) => { 
 
   console.log("==> handling an 'cmdemo' job")
 
